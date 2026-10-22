@@ -9,7 +9,7 @@ WorkingDirectory=/opt/practice-b/app
 # The leading "-" means: do not fail if the file is missing
 EnvironmentFile=-/opt/practice-b/build.env
 # 2 worker processes, listening on localhost only. "app:app" = file app.py, object app
-ExecStart=/opt/practice-b/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5001 app:app
+ExecStart=/opt/practice-b/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5009 app:app
 Restart=on-failure
 RestartSec=3
 
