@@ -10,6 +10,7 @@ ITEMS = {
     1: {"id": 1, "name": "keyboard", "qty": 10},
     2: {"id": 2, "name": "monitor", "qty": 4},
     3: {"id": 3, "name": "headset", "qty": 7},
+    4: {"id": 4, "name": "webcam", "qty": 2},
 }
 
 
