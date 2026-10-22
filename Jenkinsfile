@@ -66,9 +66,17 @@ pipeline {
             # Install/refresh the unit file and restart
             ssh $SSH_OPTS $T "sudo cp $APP_DIR/deploy/practice-b.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable practice-b && sudo systemctl restart practice-b"
 
-            # A restart can 'succeed' and crash 2 seconds later: wait, then check
-            ssh $SSH_OPTS $T "sleep 3; systemctl is-active --quiet practice-b || { sudo journalctl -u practice-b -n 30 --no-pager; exit 1; }"
-            ssh $SSH_OPTS $T "curl -fsS http://127.0.0.1:5001/healthz"
+                        # Retry the health check for ~15 s. A restart loop can look "active" for a moment,
+            # so we test that the app ANSWERS, not just that the process exists.
+            ssh $SSH_OPTS $T '
+              for i in 1 2 3 4 5 6 7 8 9 10; do
+                if curl -fsS --max-time 2 http://127.0.0.1:5001/healthz; then echo; exit 0; fi
+                sleep 1.5
+              done
+              echo "App did not become healthy. Last service logs:"
+              sudo journalctl -u practice-b -n 40 --no-pager
+              exit 1
+            '
 
             # Nginx config: validate first, then reload
             ssh $SSH_OPTS $T "sudo cp $APP_DIR/deploy/practice-b.conf /etc/nginx/conf.d/practice-b.conf && sudo nginx -t && sudo systemctl reload nginx"
