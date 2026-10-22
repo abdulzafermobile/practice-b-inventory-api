@@ -16,7 +16,7 @@ ITEMS = {
 
 @app.get("/healthz")
 def healthz():
-    return jsonify(status="ok", build=BUILD
+    return jsonify(status="ok", build=BUILD)
 
 
 @app.get("/api/items")
